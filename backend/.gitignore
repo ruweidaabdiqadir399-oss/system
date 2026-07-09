@@ -1,0 +1,10 @@
+node_modules
+.env
+npm-debug.log*
+logs
+*.log
+uploads/*
+!uploads/.gitkeep
+coverage
+.mongo-data
+.mongo-log

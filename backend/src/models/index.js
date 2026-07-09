@@ -1,0 +1,18 @@
+module.exports = {
+  User: require('./User'),
+  Driver: require('./Driver'),
+  Staff: require('./Staff'),
+  Bus: require('./Bus'),
+  Route: require('./Route'),
+  Schedule: require('./Schedule'),
+  Booking: require('./Booking'),
+  Ticket: require('./Ticket'),
+  Payment: require('./Payment'),
+  Notification: require('./Notification'),
+  Tracking: require('./Tracking'),
+  Settings: require('./Settings'),
+  AuditLog: require('./AuditLog'),
+  Counter: require('./Counter'),
+  BoardingLog: require('./BoardingLog'),
+  DriverRating: require('./DriverRating'),
+};

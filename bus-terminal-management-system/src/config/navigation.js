@@ -1,0 +1,58 @@
+import {
+  FiGrid,
+  FiTruck,
+  FiMap,
+  FiCalendar,
+  FiClipboard,
+  FiTag,
+  FiCreditCard,
+  FiNavigation,
+  FiBarChart2,
+  FiUsers,
+  FiSettings,
+  FiCompass,
+  FiUser,
+  FiSearch,
+  FiBookOpen,
+  FiCamera,
+  FiList,
+} from 'react-icons/fi';
+import { ROLES } from '../utils/constants';
+
+export const NAV_CONFIG = {
+  [ROLES.ADMIN]: [
+    { label: 'Dashboard', to: '/admin/dashboard', icon: FiGrid },
+    { label: 'Buses', to: '/admin/buses', icon: FiTruck },
+    { label: 'Routes', to: '/admin/routes', icon: FiMap },
+    { label: 'Schedules', to: '/admin/schedules', icon: FiCalendar },
+    { label: 'Bookings', to: '/admin/bookings', icon: FiClipboard },
+    { label: 'Tickets', to: '/admin/tickets', icon: FiTag },
+    { label: 'Payments', to: '/admin/payments', icon: FiCreditCard },
+    { label: 'Live Tracking', to: '/admin/tracking', icon: FiNavigation },
+    { label: 'Reports & Analytics', to: '/admin/reports', icon: FiBarChart2 },
+    { label: 'Users', to: '/admin/users', icon: FiUsers },
+    { label: 'Settings', to: '/admin/settings', icon: FiSettings },
+  ],
+  [ROLES.STAFF]: [
+    { label: 'Dashboard', to: '/staff/dashboard', icon: FiGrid },
+    { label: 'Bookings', to: '/staff/bookings', icon: FiClipboard },
+    { label: 'Ticketing', to: '/staff/tickets', icon: FiTag },
+    { label: 'Scan Ticket', to: '/staff/scan-ticket', icon: FiCamera },
+    { label: 'Boarding History', to: '/staff/boarding-history', icon: FiList },
+    { label: 'Payments', to: '/staff/payments', icon: FiCreditCard },
+    { label: 'Schedules', to: '/staff/schedules', icon: FiCalendar },
+  ],
+  [ROLES.DRIVER]: [
+    { label: 'Dashboard', to: '/driver/dashboard', icon: FiGrid },
+    { label: 'Trip Console', to: '/driver/trip', icon: FiNavigation },
+    { label: 'My Schedule', to: '/driver/schedule', icon: FiCalendar },
+    { label: 'Profile', to: '/driver/profile', icon: FiUser },
+  ],
+  [ROLES.CUSTOMER]: [
+    { label: 'Search Trips', to: '/customer/home', icon: FiSearch },
+    { label: 'My Bookings', to: '/customer/bookings', icon: FiBookOpen },
+    { label: 'My Tickets', to: '/customer/tickets', icon: FiTag },
+    { label: 'Track My Bus', to: '/customer/track', icon: FiCompass },
+    { label: 'Profile', to: '/customer/profile', icon: FiUser },
+  ],
+};

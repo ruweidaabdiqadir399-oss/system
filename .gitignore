@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+dist/
+build/
+
+backend/node_modules/
+bus-terminal-management-system/node_modules/
+
+backend/.env
+bus-terminal-management-system/.env.local
+.claude/
+.postman/
+mcp.json

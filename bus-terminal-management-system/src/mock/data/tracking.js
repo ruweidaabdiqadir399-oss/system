@@ -1,0 +1,141 @@
+export const TRACKING_STATUS = {
+  ON_TIME: 'On Time',
+  DELAYED: 'Delayed',
+  OFFLINE: 'Offline',
+};
+
+// Abstract waypoints (percentage coordinates on a 0-100 viewBox) used to draw
+// stylised route lines on the Live Tracking map - no external map provider needed.
+export const routePaths = {
+  'RT-001': [
+    { x: 12, y: 82 },
+    { x: 34, y: 58 },
+    { x: 56, y: 38 },
+    { x: 84, y: 16 },
+  ],
+  'RT-002': [
+    { x: 14, y: 28 },
+    { x: 46, y: 36 },
+    { x: 80, y: 22 },
+  ],
+  'RT-003': [
+    { x: 22, y: 86 },
+    { x: 30, y: 56 },
+    { x: 24, y: 20 },
+  ],
+  'RT-004': [
+    { x: 78, y: 90 },
+    { x: 70, y: 62 },
+    { x: 64, y: 34 },
+  ],
+  'RT-006': [
+    { x: 12, y: 12 },
+    { x: 16, y: 36 },
+    { x: 22, y: 58 },
+  ],
+};
+
+const nowIso = () => new Date().toISOString();
+
+export const liveTracking = [
+  {
+    busId: 'BUS-002',
+    scheduleId: 'SCH-0842',
+    routeId: 'RT-001',
+    driverId: 'USR-3001',
+    status: TRACKING_STATUS.ON_TIME,
+    speedKmh: 0,
+    heading: 64,
+    position: { x: 12, y: 82 },
+    currentLocation: 'Port Authority Terminal A-12',
+    nextStop: 'Hartford Central',
+    etaMinutes: 135,
+    fuelLevel: 75,
+    passengerCount: 30,
+    lastUpdated: nowIso(),
+  },
+  {
+    busId: 'BUS-001',
+    scheduleId: 'SCH-0801',
+    routeId: 'RT-001',
+    driverId: 'USR-3002',
+    status: TRACKING_STATUS.ON_TIME,
+    speedKmh: 45,
+    heading: 58,
+    position: { x: 34, y: 58 },
+    currentLocation: 'I-91 North, near Hartford',
+    nextStop: 'Hartford Central',
+    etaMinutes: 4,
+    fuelLevel: 88,
+    passengerCount: 42,
+    lastUpdated: nowIso(),
+  },
+  {
+    busId: 'BUS-003',
+    scheduleId: 'SCH-0905',
+    routeId: 'RT-002',
+    driverId: 'USR-3003',
+    status: TRACKING_STATUS.ON_TIME,
+    speedKmh: 60,
+    heading: 22,
+    position: { x: 46, y: 36 },
+    currentLocation: 'I-94 West, near Kalamazoo',
+    nextStop: 'Detroit - Rosa Parks Transit Center',
+    etaMinutes: 95,
+    fuelLevel: 64,
+    passengerCount: 36,
+    lastUpdated: nowIso(),
+  },
+  {
+    busId: 'BUS-005',
+    scheduleId: 'SCH-1102',
+    routeId: 'RT-003',
+    driverId: 'USR-3004',
+    status: TRACKING_STATUS.OFFLINE,
+    speedKmh: 0,
+    heading: 0,
+    position: { x: 22, y: 86 },
+    currentLocation: 'Los Angeles - Union Station (Bay 3)',
+    nextStop: 'San Luis Obispo',
+    etaMinutes: null,
+    fuelLevel: 91,
+    passengerCount: 0,
+    lastUpdated: nowIso(),
+  },
+  {
+    busId: 'BUS-006',
+    scheduleId: 'SCH-1150',
+    routeId: 'RT-004',
+    driverId: null,
+    status: TRACKING_STATUS.DELAYED,
+    speedKmh: 12,
+    heading: 200,
+    position: { x: 70, y: 62 },
+    currentLocation: 'SR-528, near Orlando',
+    nextStop: 'Orlando - North Wing Terminal',
+    etaMinutes: 48,
+    fuelLevel: 40,
+    passengerCount: 32,
+    lastUpdated: nowIso(),
+  },
+  {
+    busId: 'BUS-007',
+    scheduleId: 'SCH-1201',
+    routeId: 'RT-006',
+    driverId: 'USR-3006',
+    status: TRACKING_STATUS.ON_TIME,
+    speedKmh: 0,
+    heading: 0,
+    position: { x: 12, y: 12 },
+    currentLocation: 'Seattle - King Street Station (Gate A-4)',
+    nextStop: 'Portland - Union Station',
+    etaMinutes: 180,
+    fuelLevel: 82,
+    passengerCount: 20,
+    lastUpdated: nowIso(),
+  },
+];
+
+export const findTrackingByBus = (busId) => liveTracking.find((t) => t.busId === busId);
+export const findTrackingBySchedule = (scheduleId) =>
+  liveTracking.find((t) => t.scheduleId === scheduleId);
