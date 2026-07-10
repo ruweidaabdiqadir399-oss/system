@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiTruck } from 'react-icons/fi';
 import { APP_FULL_NAME } from '../../utils/constants';
-import busHeroImage from '../../assets/images/Bus-photo.jpg.jpeg';
+import busHeroImage from '../../Assets/images/Bus-photo.jpg.jpeg';
 
 const STATS = [
   { value: '20+', label: 'Buses' },
