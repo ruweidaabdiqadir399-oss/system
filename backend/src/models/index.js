@@ -9,6 +9,8 @@ module.exports = {
   Ticket: require('./Ticket'),
   Payment: require('./Payment'),
   Notification: require('./Notification'),
+  StaffReport: require('./StaffReport'),
+  SupportRequest: require('./SupportRequest'),
   Tracking: require('./Tracking'),
   Settings: require('./Settings'),
   AuditLog: require('./AuditLog'),

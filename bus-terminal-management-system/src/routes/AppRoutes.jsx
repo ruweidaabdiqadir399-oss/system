@@ -22,6 +22,9 @@ import AdminTickets from '../pages/admin/Tickets';
 import AdminPayments from '../pages/admin/Payments';
 import AdminTracking from '../pages/admin/Tracking';
 import AdminReports from '../pages/admin/Reports';
+import AdminStaffReports from '../pages/admin/StaffReports';
+import AdminSupport from '../pages/admin/Support';
+import AdminReviews from '../pages/admin/Reviews';
 import AdminUsers from '../pages/admin/Users';
 import AdminSettings from '../pages/admin/Settings';
 import AdminProfile from '../pages/admin/Profile';
@@ -33,6 +36,8 @@ import StaffScanTicket from '../pages/staff/ScanTicket';
 import StaffBoardingHistory from '../pages/staff/BoardingHistory';
 import StaffPayments from '../pages/staff/Payments';
 import StaffSchedules from '../pages/staff/Schedules';
+import StaffReports from '../pages/staff/Reports';
+import StaffSupport from '../pages/staff/Support';
 import StaffProfile from '../pages/staff/Profile';
 
 import DriverDashboard from '../pages/driver/Dashboard';
@@ -47,6 +52,7 @@ import CustomerCheckout from '../pages/customer/Checkout';
 import CustomerBookings from '../pages/customer/Bookings';
 import CustomerTicketView from '../pages/customer/TicketView';
 import CustomerTrackBus from '../pages/customer/TrackBus';
+import CustomerSupport from '../pages/customer/Support';
 import CustomerProfile from '../pages/customer/Profile';
 
 const RoleHomeRedirect = () => {
@@ -78,6 +84,9 @@ const AppRoutes = () => (
         <Route path="/admin/payments" element={<AdminPayments />} />
         <Route path="/admin/tracking" element={<AdminTracking />} />
         <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/staff-reports" element={<AdminStaffReports />} />
+        <Route path="/admin/support" element={<AdminSupport />} />
+        <Route path="/admin/reviews" element={<AdminReviews />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
@@ -93,6 +102,8 @@ const AppRoutes = () => (
         <Route path="/staff/boarding-history" element={<StaffBoardingHistory />} />
         <Route path="/staff/payments" element={<StaffPayments />} />
         <Route path="/staff/schedules" element={<StaffSchedules />} />
+        <Route path="/staff/reports" element={<StaffReports />} />
+        <Route path="/staff/support" element={<StaffSupport />} />
         <Route path="/staff/profile" element={<StaffProfile />} />
       </Route>
     </Route>
@@ -115,6 +126,7 @@ const AppRoutes = () => (
         <Route path="/customer/bookings" element={<CustomerBookings />} />
         <Route path="/customer/tickets" element={<CustomerTicketView />} />
         <Route path="/customer/track" element={<CustomerTrackBus />} />
+        <Route path="/customer/support" element={<CustomerSupport />} />
         <Route path="/customer/profile" element={<CustomerProfile />} />
       </Route>
     </Route>

@@ -15,7 +15,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { getBookingsByCustomer, cancelBooking, BOOKING_STATUS_FILTERS } from '../../services/bookingService';
 import { getScheduleById } from '../../services/scheduleService';
-import { submitDriverRating, checkBookingRating } from '../../services/ratingService';
+import { submitDriverRating, checkBookingRating, getMyReviews } from '../../services/ratingService';
 import { formatCurrency, formatDate, formatTime, formatDateTime } from '../../utils/formatters';
 import { DEFAULT_PAGE_SIZE } from '../../utils/constants';
 
@@ -38,6 +38,8 @@ const CustomerBookings = () => {
     () => getBookingsByCustomer(user._id, { status, page, pageSize: DEFAULT_PAGE_SIZE }),
     [user._id, status, page]
   );
+
+  const { data: myReviews, loading: reviewsLoading, refetch: refetchReviews } = useFetch(() => getMyReviews(), []);
 
   useEffect(() => {
     setPage(1);
@@ -89,6 +91,7 @@ const CustomerBookings = () => {
       toast.success('Thank you! Your rating has been submitted.');
       setRatedBookings((prev) => new Set([...prev, ratingTarget.booking._id]));
       setRatingTarget(null);
+      refetchReviews();
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to submit rating. Please try again.');
     } finally {
@@ -228,6 +231,49 @@ const CustomerBookings = () => {
           }
         />
         <Pagination page={data?.page} totalPages={data?.totalPages} total={data?.total} pageSize={data?.pageSize} onPageChange={setPage} />
+      </Card>
+
+      <Card className="mt-6" title="My Reviews" subtitle="Ratings and feedback you've submitted for past trips.">
+        {reviewsLoading ? (
+          <div className="space-y-3">
+            <div className="skeleton h-12 w-full rounded" />
+            <div className="skeleton h-12 w-full rounded" />
+          </div>
+        ) : !myReviews || myReviews.length === 0 ? (
+          <p className="py-4 text-center text-sm text-ink-muted">You haven&rsquo;t rated any trips yet.</p>
+        ) : (
+          <div className="table-shell">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Trip</th>
+                  <th>Driver</th>
+                  <th>Rating</th>
+                  <th>Comment</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {myReviews.map((review) => (
+                  <tr key={review._id}>
+                    <td>
+                      <p className="font-medium text-ink">{review.routeName ?? review.scheduleId}</p>
+                      {review.routeOrigin && (
+                        <p className="text-xs text-ink-muted">{review.routeOrigin} → {review.routeDestination}</p>
+                      )}
+                    </td>
+                    <td className="text-ink">{review.driverName}</td>
+                    <td>
+                      <span className="text-warning-500">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                    </td>
+                    <td className="text-sm text-ink-muted">{review.comment || '—'}</td>
+                    <td className="text-sm text-ink-muted">{formatDateTime(review.reviewDate)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       <Modal isOpen={Boolean(viewBooking)} onClose={() => setViewBooking(null)} title={`Booking ${viewBooking?._id}`} size="lg">

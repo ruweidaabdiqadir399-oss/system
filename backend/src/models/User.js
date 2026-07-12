@@ -43,7 +43,8 @@ const userSchema = new mongoose.Schema(
     joinedDate: { type: Date, default: Date.now },
     avatar: { type: String, default: '' },
 
-    // Admin-specific
+    // Staff-only, informational — not used for permissions or access control.
+    // Kept empty for admin/driver/customer users (enforced in userController).
     department: { type: String, default: '' },
 
     // Customer-specific

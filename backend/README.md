@@ -285,7 +285,7 @@ All routes are prefixed with `/api/v1` (configurable via `API_PREFIX`).
 
 **Login**
 ```bash
-curl -X POST http://localhost:5000/api/v1/auth/login \
+curl -X POST http:///api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@btms.com","password":"Admin@123"}'
 ```

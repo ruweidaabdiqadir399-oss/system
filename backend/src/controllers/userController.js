@@ -6,7 +6,16 @@ const { buildSearchFilter } = require('../utils/searchFilter');
 const generateId = require('../utils/generateId');
 const logAudit = require('../utils/auditLog');
 const { User, Driver, Staff } = require('../models');
-const { AUDIT_ACTIONS } = require('../constants');
+const { AUDIT_ACTIONS, ROLES, DEPARTMENTS } = require('../constants');
+
+// Department is informational and only meaningful for Staff users — every
+// write path funnels through here so non-staff records can never end up
+// with a stale department value (e.g. after a role change).
+const assertValidStaffDepartment = (department) => {
+  if (!department || !DEPARTMENTS.includes(department)) {
+    throw ApiError.badRequest('Department is required for staff users.');
+  }
+};
 
 // @desc    List users with search, role and status filters
 // @route   GET /api/v1/users
@@ -48,15 +57,18 @@ const getUserById = asyncHandler(async (req, res) => {
 // @route   POST /api/v1/users
 // @access  Private (admin)
 const createUser = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email, role = ROLES.CUSTOMER, department } = req.body;
   const existing = await User.findOne({ email: email.toLowerCase() });
   if (existing) throw ApiError.conflict('A user with this email already exists.');
+
+  if (role === ROLES.STAFF) assertValidStaffDepartment(department);
 
   const _id = await generateId('USR', 'USR-', 9001);
   const user = await User.create({
     _id,
     password: 'Welcome@123',
     ...req.body,
+    department: role === ROLES.STAFF ? department : '',
   });
 
   await logAudit({
@@ -80,6 +92,16 @@ const updateUser = asyncHandler(async (req, res) => {
   if (!user) throw ApiError.notFound('User not found.');
 
   const { password, _id, ...updates } = req.body;
+  const effectiveRole = updates.role || user.role;
+
+  if (effectiveRole === ROLES.STAFF) {
+    const department = updates.department ?? user.department;
+    assertValidStaffDepartment(department);
+    updates.department = department;
+  } else {
+    updates.department = '';
+  }
+
   Object.assign(user, updates);
   await user.save();
 
@@ -130,7 +152,17 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access  Private
 const updateProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  Object.assign(user, req.body);
+  const updates = { ...req.body };
+
+  if (user.role === ROLES.STAFF) {
+    if (updates.department !== undefined && updates.department !== '') {
+      assertValidStaffDepartment(updates.department);
+    }
+  } else {
+    delete updates.department;
+  }
+
+  Object.assign(user, updates);
   await user.save();
   ok(res, user, 'Profile updated successfully.');
 });

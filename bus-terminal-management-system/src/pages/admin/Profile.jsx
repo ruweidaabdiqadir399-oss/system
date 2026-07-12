@@ -4,6 +4,7 @@ import { FiSave, FiLock, FiMail, FiPhone, FiBriefcase, FiCalendar } from 'react-
 import PageHeader from '../../components/common/PageHeader';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
+import Select from '../../components/common/Select';
 import Button from '../../components/common/Button';
 import Avatar from '../../components/common/Avatar';
 import Badge from '../../components/common/Badge';
@@ -13,7 +14,7 @@ import { updateProfile } from '../../services/userService';
 import { changePassword } from '../../services/authService';
 import { emailRule, phoneRule, passwordRule } from '../../utils/validators';
 import { formatDate } from '../../utils/formatters';
-import { ROLE_LABELS } from '../../utils/constants';
+import { ROLE_LABELS, DEPARTMENTS } from '../../utils/constants';
 
 const ProfileForm = ({ user, onSaved }) => {
   const toast = useToast();
@@ -46,7 +47,7 @@ const ProfileForm = ({ user, onSaved }) => {
         <Input label="Full Name" error={errors.name?.message} {...register('name', { required: 'Name is required.' })} />
         <Input label="Email Address" type="email" error={errors.email?.message} {...register('email', emailRule)} />
         <Input label="Phone Number" error={errors.phone?.message} {...register('phone', phoneRule)} />
-        <Input label="Department" {...register('department')} />
+        <Select label="Department" placeholder="Select department..." options={DEPARTMENTS} {...register('department')} />
       </div>
       <div className="flex justify-end">
         <Button type="submit" leftIcon={<FiSave className="h-4 w-4" />} isLoading={isSubmitting}>

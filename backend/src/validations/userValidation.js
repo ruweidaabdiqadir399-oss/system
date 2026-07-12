@@ -1,5 +1,5 @@
 const { body, query } = require('express-validator');
-const { ROLES, USER_STATUS } = require('../constants');
+const { ROLES, USER_STATUS, DEPARTMENTS } = require('../constants');
 
 const createUserValidator = [
   body('name').trim().notEmpty().withMessage('Name is required.'),
@@ -8,6 +8,7 @@ const createUserValidator = [
   body('role').optional().isIn(Object.values(ROLES)).withMessage('Invalid role.'),
   body('phone').optional().isString(),
   body('status').optional().isIn(Object.values(USER_STATUS)).withMessage('Invalid status.'),
+  body('department').optional({ checkFalsy: true }).isIn(DEPARTMENTS).withMessage('Invalid department.'),
 ];
 
 const updateUserValidator = [
@@ -16,11 +17,13 @@ const updateUserValidator = [
   body('role').optional().isIn(Object.values(ROLES)).withMessage('Invalid role.'),
   body('status').optional().isIn(Object.values(USER_STATUS)).withMessage('Invalid status.'),
   body('phone').optional().isString(),
+  body('department').optional({ checkFalsy: true }).isIn(DEPARTMENTS).withMessage('Invalid department.'),
 ];
 
 const updateProfileValidator = [
   body('name').optional().trim().notEmpty().withMessage('Name cannot be empty.'),
   body('phone').optional().isString(),
+  body('department').optional({ checkFalsy: true }).isIn(DEPARTMENTS).withMessage('Invalid department.'),
   body('email').not().exists().withMessage('Email cannot be changed here.'),
   body('role').not().exists().withMessage('Role cannot be changed here.'),
 ];

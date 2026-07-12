@@ -16,6 +16,11 @@ import {
   FiBookOpen,
   FiCamera,
   FiList,
+  FiFileText,
+  FiHelpCircle,
+  FiMessageCircle,
+  FiActivity,
+  FiStar,
 } from 'react-icons/fi';
 import { ROLES } from '../utils/constants';
 
@@ -30,6 +35,9 @@ export const NAV_CONFIG = {
     { label: 'Payments', to: '/admin/payments', icon: FiCreditCard },
     { label: 'Live Tracking', to: '/admin/tracking', icon: FiNavigation },
     { label: 'Reports & Analytics', to: '/admin/reports', icon: FiBarChart2 },
+    { label: 'Staff Reports', to: '/admin/staff-reports', icon: FiFileText },
+    { label: 'Support Overview', to: '/admin/support', icon: FiActivity },
+    { label: 'Reviews Overview', to: '/admin/reviews', icon: FiStar },
     { label: 'Users', to: '/admin/users', icon: FiUsers },
     { label: 'Settings', to: '/admin/settings', icon: FiSettings },
   ],
@@ -41,6 +49,8 @@ export const NAV_CONFIG = {
     { label: 'Boarding History', to: '/staff/boarding-history', icon: FiList },
     { label: 'Payments', to: '/staff/payments', icon: FiCreditCard },
     { label: 'Schedules', to: '/staff/schedules', icon: FiCalendar },
+    { label: 'Reports', to: '/staff/reports', icon: FiFileText },
+    { label: 'Support Management', to: '/staff/support', icon: FiMessageCircle },
   ],
   [ROLES.DRIVER]: [
     { label: 'Dashboard', to: '/driver/dashboard', icon: FiGrid },
@@ -53,6 +63,7 @@ export const NAV_CONFIG = {
     { label: 'My Bookings', to: '/customer/bookings', icon: FiBookOpen },
     { label: 'My Tickets', to: '/customer/tickets', icon: FiTag },
     { label: 'Track My Bus', to: '/customer/track', icon: FiCompass },
+    { label: 'Support', to: '/customer/support', icon: FiHelpCircle },
     { label: 'Profile', to: '/customer/profile', icon: FiUser },
   ],
 };

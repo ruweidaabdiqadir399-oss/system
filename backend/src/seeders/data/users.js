@@ -15,7 +15,6 @@ module.exports = [
     phone: '+252 61 234 5678',
     status: 'Active',
     joinedDate: '2021-03-15',
-    department: 'Maamulka Guud',
   },
 
   // ─── Staff ───────────────────────────────────────────────────────────────
@@ -30,6 +29,7 @@ module.exports = [
     joinedDate: '2022-06-18',
     desk: 'Miiska 1 – Terminal A',
     shift: 'Morning',
+    department: 'Ticketing',
   },
   {
     _id: 'USR-2002',
@@ -42,6 +42,7 @@ module.exports = [
     joinedDate: '2022-09-10',
     desk: 'Miiska 2 – Terminal B',
     shift: 'Afternoon',
+    department: 'Customer Service',
   },
   {
     _id: 'USR-2003',
@@ -54,6 +55,7 @@ module.exports = [
     joinedDate: '2023-01-22',
     desk: 'Miiska 3 – Terminal A',
     shift: 'Morning',
+    department: 'Boarding',
   },
 
   // ─── Drivers ─────────────────────────────────────────────────────────────

@@ -15,6 +15,7 @@ const busSchema = new mongoose.Schema(
     driverId: { type: String, ref: 'User', default: null },
     fuelLevel: { type: Number, default: 100, min: 0, max: 100 },
     mileage: { type: Number, default: 0, min: 0 },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
     year: { type: Number },
     lastServiceDate: { type: Date, default: Date.now },
   },

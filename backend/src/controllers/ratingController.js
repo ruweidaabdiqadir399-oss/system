@@ -1,9 +1,40 @@
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
-const { ok, created } = require('../utils/ApiResponse');
+const { ok, created, paginated } = require('../utils/ApiResponse');
+const paginate = require('../utils/paginate');
+const { buildSearchFilter } = require('../utils/searchFilter');
 const generateId = require('../utils/generateId');
-const { Booking, Schedule, Ticket, Driver, User, DriverRating } = require('../models');
+const { Booking, Schedule, Ticket, Driver, Bus, User, DriverRating } = require('../models');
 const { ROLES, BOOKING_PAYMENT_STATUS, TICKET_STATUS, SCHEDULE_STATUS } = require('../constants');
+
+const REVIEW_POPULATE = [
+  { path: 'driverId', select: 'name' },
+  { path: 'customerId', select: 'name' },
+  { path: 'busId', select: 'busNumber model' },
+  { path: 'scheduleId', populate: { path: 'routeId', select: 'name origin destination' } },
+];
+
+const enrichReview = (doc) => {
+  const r = typeof doc.toJSON === 'function' ? doc.toJSON() : doc;
+  const driver = r.driverId && typeof r.driverId === 'object' ? r.driverId : null;
+  const customer = r.customerId && typeof r.customerId === 'object' ? r.customerId : null;
+  const bus = r.busId && typeof r.busId === 'object' ? r.busId : null;
+  const schedule = r.scheduleId && typeof r.scheduleId === 'object' ? r.scheduleId : null;
+  const route = schedule?.routeId && typeof schedule.routeId === 'object' ? schedule.routeId : null;
+  return {
+    ...r,
+    driverId: driver?._id ?? r.driverId,
+    driverName: driver?.name ?? 'Driver',
+    customerId: customer?._id ?? r.customerId,
+    customerName: customer?.name ?? 'Customer',
+    busId: bus?._id ?? r.busId,
+    busNumber: bus?.busNumber ?? null,
+    scheduleId: schedule?._id ?? r.scheduleId,
+    routeName: route?.name ?? null,
+    routeOrigin: route?.origin ?? null,
+    routeDestination: route?.destination ?? null,
+  };
+};
 
 // @desc    Submit a driver rating for a completed booking
 // @route   POST /api/v1/ratings
@@ -50,6 +81,7 @@ const submitRating = asyncHandler(async (req, res) => {
   const newRating = await DriverRating.create({
     _id,
     driverId: schedule.driverId,
+    busId: schedule.busId,
     customerId: req.user._id,
     bookingId,
     scheduleId: schedule._id,
@@ -59,11 +91,17 @@ const submitRating = asyncHandler(async (req, res) => {
   });
 
   // Update the driver's average rating
-  const allRatings = await DriverRating.find({ driverId: schedule.driverId });
-  const avg = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length;
-  await Driver.findOneAndUpdate({ userId: schedule.driverId }, { rating: Math.round(avg * 10) / 10 });
+  const driverRatings = await DriverRating.find({ driverId: schedule.driverId });
+  const driverAvg = driverRatings.reduce((sum, r) => sum + r.rating, 0) / driverRatings.length;
+  await Driver.findOneAndUpdate({ userId: schedule.driverId }, { rating: Math.round(driverAvg * 10) / 10 });
 
-  created(res, newRating, 'Rating submitted successfully.');
+  // Update the bus's average rating
+  const busRatings = await DriverRating.find({ busId: schedule.busId });
+  const busAvg = busRatings.reduce((sum, r) => sum + r.rating, 0) / busRatings.length;
+  await Bus.findByIdAndUpdate(schedule.busId, { rating: Math.round(busAvg * 10) / 10 });
+
+  const populated = await DriverRating.findById(newRating._id).populate(REVIEW_POPULATE);
+  created(res, enrichReview(populated), 'Rating submitted successfully.');
 });
 
 // @desc    Check if a customer has already rated a booking
@@ -144,4 +182,65 @@ const getDriverRatings = asyncHandler(async (req, res) => {
   ok(res, { driverName: driver.name, avgRating, totalReviews, reviews }, 'Driver ratings fetched successfully.');
 });
 
-module.exports = { submitRating, checkRating, getMyRatingSummary, getDriversSummary, getDriverRatings };
+// @desc    Get the authenticated customer's own submitted reviews
+// @route   GET /api/v1/ratings/my-reviews
+// @access  Private (customer)
+const getMyReviews = asyncHandler(async (req, res) => {
+  const reviews = await DriverRating.find({ customerId: req.user._id })
+    .sort({ reviewDate: -1 })
+    .populate(REVIEW_POPULATE);
+
+  ok(res, reviews.map(enrichReview), 'Your reviews were fetched successfully.');
+});
+
+// @desc    Get rating summaries for all buses (keyed by busId)
+// @route   GET /api/v1/ratings/buses/summary
+// @access  Private (admin)
+const getBusesSummary = asyncHandler(async (req, res) => {
+  const agg = await DriverRating.aggregate([
+    {
+      $group: {
+        _id: '$busId',
+        totalReviews: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  const summary = {};
+  agg.forEach((row) => {
+    summary[row._id] = {
+      avgRating: Math.round(row.avgRating * 10) / 10,
+      totalReviews: row.totalReviews,
+    };
+  });
+  ok(res, summary, 'Bus rating summaries fetched successfully.');
+});
+
+// @desc    List every review across all trips, drivers, and buses
+// @route   GET /api/v1/ratings
+// @access  Private (admin)
+const getAllReviews = asyncHandler(async (req, res) => {
+  const { search = '', page, pageSize } = req.query;
+
+  const filter = { ...buildSearchFilter(search, ['comment', '_id']) };
+
+  const result = await paginate(DriverRating, filter, {
+    page,
+    pageSize,
+    sort: '-reviewDate',
+    populate: REVIEW_POPULATE,
+  });
+
+  paginated(res, { ...result, items: result.items.map(enrichReview) }, 'Reviews fetched successfully.');
+});
+
+module.exports = {
+  submitRating,
+  checkRating,
+  getMyRatingSummary,
+  getDriversSummary,
+  getDriverRatings,
+  getMyReviews,
+  getBusesSummary,
+  getAllReviews,
+};

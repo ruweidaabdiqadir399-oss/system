@@ -23,7 +23,7 @@ import { assignBusToDriver } from '../../services/driverService';
 import { getDriversSummary, getDriverRatings } from '../../services/ratingService';
 import { formatDate, formatDateTime } from '../../utils/formatters';
 import { emailRule, phoneRule } from '../../utils/validators';
-import { DEFAULT_PAGE_SIZE } from '../../utils/constants';
+import { DEFAULT_PAGE_SIZE, DEPARTMENTS } from '../../utils/constants';
 
 const ROLE_FILTER_OPTIONS = [
   { value: 'all', label: 'All Roles' },
@@ -133,11 +133,17 @@ const UserFormModal = ({ isOpen, onClose, onSubmit, initialValues, isSaving, tit
           />
         )}
 
-        {role === 'admin' && (
-          <Input label="Department" placeholder="e.g. Terminal Operations" containerClassName="sm:col-span-2" {...register('department')} />
-        )}
         {role === 'staff' && (
-          <Input label="Desk / Counter" placeholder="e.g. Counter 3 - Terminal A" containerClassName="sm:col-span-2" {...register('desk')} />
+          <>
+            <Select
+              label="Department"
+              placeholder="Select department..."
+              options={DEPARTMENTS}
+              error={errors.department?.message}
+              {...register('department', { required: 'Department is required for staff users.' })}
+            />
+            <Input label="Desk / Counter" placeholder="e.g. Counter 3 - Terminal A" {...register('desk')} />
+          </>
         )}
         {role === 'driver' && (
           <>
@@ -279,12 +285,13 @@ const AdminUsers = () => {
   const handleSave = async (formValues) => {
     setIsSaving(true);
     try {
+      const values = { ...formValues, department: formValues.role === 'staff' ? formValues.department : '' };
       if (editingUser) {
-        const { password, ...payload } = formValues;
+        const { password, ...payload } = values;
         await updateUser(editingUser._id, payload);
         toast.success('User updated successfully.');
       } else {
-        await createUser(formValues);
+        await createUser(values);
         toast.success('User created successfully.');
       }
       setModalOpen(false);
@@ -333,6 +340,16 @@ const AdminUsers = () => {
       render: (row) => <Badge variant={ROLE_VARIANT[row.role]}>{row.role.charAt(0).toUpperCase() + row.role.slice(1)}</Badge>,
     },
     { key: 'phone', header: 'Phone' },
+    {
+      key: 'department',
+      header: 'Department',
+      render: (row) =>
+        row.role === 'staff' ? (
+          row.department || <span className="text-ink-muted">—</span>
+        ) : (
+          <span className="text-ink-muted">N/A</span>
+        ),
+    },
     { key: 'joinedDate', header: 'Joined', render: (row) => formatDate(row.joinedDate) },
     { key: 'status', header: 'Status', render: (row) => <Badge status={row.status} /> },
     {
